@@ -11,22 +11,9 @@ const geminiApi = process.env.NEXT_PUBLIC_GEMINI_APIKEY || "";
 const genAI = new GoogleGenerativeAI(geminiApi);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-// interface InputField {
-//   field: string;
-//   type: string;
-//   label: string;
-//   required: boolean;
-// }
-
-// interface OutputField {
-//   field: string;
-//   label: string;
-//   type: string;
-// }
-
 const PlanCase = () => {
   const [planObject, setPlanObject] = useState<PlanInfo | undefined>();
-  const [inputs, setInputs] = useState<any>({});
+  const [inputs, setInputs] = useState<Record<string, string>>({});
   const [outputs, setOutputs] = useState<string[]>([]);
   const [generatedPlan, setGeneratedPlan] = useState<string>("");
   const params = useParams();
@@ -73,7 +60,6 @@ const PlanCase = () => {
         </button>
       </div>
 
-      
       {params?.plancase ? (
         <h1 className="text-3xl font-semibold text-gray-800 mb-4">{planObject?.useCase}</h1>
       ) : (
@@ -107,7 +93,7 @@ const PlanCase = () => {
                     required={input.required}
                     placeholder={`Enter ${input.label}`}
                     onChange={(e) =>
-                      setInputs((prev: any) => ({ ...prev, [input.field]: e.target.value }))
+                      setInputs((prev) => ({ ...prev, [input.field]: e.target.value }))
                     }
                   />
                 </div>
