@@ -107,7 +107,7 @@ const PlanCase = () => {
                     type="checkbox"
                     id={output.field}
                     className="w-5 h-5 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    onChange={() => setOutputs((prev) => [...prev, output.field])}
+                    onChange={() => setOutputs((prev) => prev.includes(output.field)?prev.filter(item=>item!==output.field):[...prev, output.field])}
                   />
                   <label htmlFor={output.field} className="ml-3 text-md text-gray-700">
                     {output.label}
