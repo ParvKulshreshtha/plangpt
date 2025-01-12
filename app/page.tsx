@@ -9,7 +9,7 @@ export default function Home() {
     <div className="">
       <main className="p-4">
       <div className="flex flex-wrap gap-6 justify-center">
-        {planData?.map((data:PlanInfo, index) => (
+        {planData?.map((data:PlanInfo) => (
           <div 
             key={data.uri}
             onClick={() => router.push(`/${data.uri}`)}

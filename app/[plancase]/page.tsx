@@ -11,20 +11,20 @@ const geminiApi = process.env.NEXT_PUBLIC_GEMINI_APIKEY || "";
 const genAI = new GoogleGenerativeAI(geminiApi);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-interface InputField {
-  field: string;
-  type: string;
-  label: string;
-  required: boolean;
-}
+// interface InputField {
+//   field: string;
+//   type: string;
+//   label: string;
+//   required: boolean;
+// }
 
-interface OutputField {
-  field: string;
-  label: string;
-  type: string;
-}
+// interface OutputField {
+//   field: string;
+//   label: string;
+//   type: string;
+// }
 
-const Index = () => {
+const PlanCase = () => {
   const [planObject, setPlanObject] = useState<PlanInfo | undefined>();
   const [inputs, setInputs] = useState<any>({});
   const [outputs, setOutputs] = useState<string[]>([]);
@@ -92,7 +92,7 @@ const Index = () => {
             <p className="text-lg text-gray-600 mb-4">{planObject.description}</p>
             <h3 className="text-xl font-semibold text-gray-700 mb-2">Tell us about your plan:</h3>
             <div className="pl-5 text-gray-600">
-              {planObject.inputs.map((input, index) => (
+              {planObject.inputs.map((input) => (
                 <div key={input.field} className="mb-4">
                   <label
                     htmlFor={input.field}
@@ -115,13 +115,13 @@ const Index = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-700 mt-4 mb-2">Select What you want to know:</h3>
             <div className="pl-5 text-gray-600">
-              {planObject.outputs.map((output, index) => (
-                <div key={index} className="flex items-center mb-4">
+              {planObject.outputs.map((output) => (
+                <div key={output.field} className="flex items-center mb-4">
                   <input
                     type="checkbox"
                     id={output.field}
                     className="w-5 h-5 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    onChange={(e) => setOutputs((prev) => [...prev, output.field])}
+                    onChange={() => setOutputs((prev) => [...prev, output.field])}
                   />
                   <label htmlFor={output.field} className="ml-3 text-md text-gray-700">
                     {output.label}
@@ -149,4 +149,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default PlanCase;
