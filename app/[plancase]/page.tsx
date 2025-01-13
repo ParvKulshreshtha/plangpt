@@ -156,16 +156,16 @@ const PlanCase = () => {
               </button>
             </div>
           ) : (
-            <div onClick={() => {
+            <div className="p-6 cursor-pointer">
+              <div  onClick={() => {
               setGeneratedPlan("")
               setInputs({})
               setOutputs([])
-            }} className="p-6 cursor-pointer">
-              <div className="text-red-500 flex gap-4">
-              <GiCrossMark
-                className="text-2xl text-red-500 mb-4 cursor-pointer"
-              />
-              Back
+            }}  className="text-red-500 flex gap-4">
+                <GiCrossMark
+                  className="text-2xl text-red-500 mb-4"
+                />
+                Back
               </div>
               <div
                 dangerouslySetInnerHTML={{ __html: generatedPlan }}
