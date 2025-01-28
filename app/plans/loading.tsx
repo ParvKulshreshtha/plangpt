@@ -2,7 +2,7 @@ import React from 'react'
 
 const loading = () => {
   return (
-    <div className="fixed top-0 left-0 w-full h-1 bg-blue-500 animate-pulse z-50"></div>
+    <div className="fixed top-0 left-0 w-full h-1 bg-neon-green animate-pulse z-50"></div>
   )
 }
 

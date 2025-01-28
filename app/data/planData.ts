@@ -181,4 +181,84 @@ export const planData:PlanInfo[] = [
         { field: 'vetReminders', label: 'Vet Visit Reminders', type: 'checkbox' },
       ],
     },
+    {
+      useCase: "Study Planner",
+      description: "Helps students organize their study schedule based on exam dates and subjects.",
+      uri: "study-planner",
+      image: "https://example.com/images/study.jpg",
+      initialPrompt: "Plan your study schedule based on:",
+      inputs: [
+        {
+          field: "subjects",
+          type: "text",
+          label: "Subjects to Study",
+          required: true
+        },
+        {
+          field: "examDate",
+          type: "date",
+          label: "Exam Date",
+          required: true
+        },
+        {
+          field: "studyHours",
+          type: "number",
+          label: "Daily Study Hours",
+          required: true
+        }
+      ],
+      outputs: [
+        {
+          field: "studySchedule",
+          label: "Study Schedule",
+          type: "checkbox"
+        },
+        {
+          field: "examPreparation",
+          label: "Exam Preparation Tips",
+          type: "checkbox"
+        }
+      ]
+    },
+    {
+      useCase: "Content Calendar Planner",
+      description: "Helps plan content for social media and blogs.",
+      uri: "content-calendar-planner",
+      image: "https://example.com/images/content.jpg",
+      initialPrompt: "Create a content calendar based on:",
+      inputs: [
+        {
+          field: "platform",
+          type: "text",
+          label: "Content Platform (e.g., Instagram, Blog)",
+          required: true
+        },
+        {
+          field: "contentType",
+          type: "text",
+          label: "Content Type (e.g., blog post, video)",
+          required: true
+        },
+        {
+          field: "postingFrequency",
+          type: "number",
+          label: "Posts per Week",
+          required: true
+        }
+      ],
+      outputs: [
+        {
+          field: "contentIdeas",
+          label: "Content Ideas",
+          type: "checkbox"
+        },
+        {
+          field: "postingSchedule",
+          label: "Posting Schedule",
+          type: "checkbox"
+        }
+      ]
+    },
+  
+    
   ];
