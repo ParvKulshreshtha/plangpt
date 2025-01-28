@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { planData, PlanInfo } from "../../data/planData";
 import { GoogleGenerativeAI } from "@google/generative-ai";
