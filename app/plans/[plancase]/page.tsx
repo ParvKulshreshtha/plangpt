@@ -4,7 +4,6 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { planData, PlanInfo } from "../../data/planData";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { IoChevronBackSharp } from "react-icons/io5";
 import { GiCrossMark } from "react-icons/gi";
 
 // API key and model initialization
@@ -20,7 +19,6 @@ const PlanCase = () => {
   const [generatedPlan, setGeneratedPlan] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const params = useParams();
-  const router = useRouter();
 
   useEffect(() => {
     if (params?.plancase) {
