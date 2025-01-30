@@ -10,7 +10,7 @@ export default function Home() {
     <div className="font-sans"> {/* Updated background color */}
       {/* Banner Section */}
       <div className="relative w-full bg-gradient-to-r from-neon-pink to-neon-blue text-white text-center py-32 sm:py-48 lg:py-48">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">Plan your Trips Using Genai</h1>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">Plan your Life Using Genai</h1>
         <p className="mt-4 text-lg sm:text-xl lg:text-2xl max-w-3xl mx-auto">
           Discover the best plans that fit your needs. Choose the one that suits you best and get started today.
         </p>
