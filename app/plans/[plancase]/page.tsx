@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { planData, PlanInfo } from "../../data/planData";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GiCrossMark } from "react-icons/gi";
-import DOMPurify from "dompurify";
 
 // API key and model initialization
 const geminiApi = process.env.NEXT_PUBLIC_GEMINI_APIKEY || "";
@@ -41,13 +40,8 @@ const PlanCase = () => {
     content = content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-blue-600">$1</strong>');
     content = content.replace(/```(.*?)```/g, '<pre class="bg-gray-800 text-white p-2 rounded">$1</pre>');
     content = content.replace(/\n/g, '<br/>');
-    
-    // Sanitize the HTML to prevent XSS attacks
-    return DOMPurify.sanitize(content, {
-      ALLOWED_TAGS: ['h2', 'strong', 'pre', 'br', 'p', 'ul', 'ol', 'li', 'em', 'code', 'blockquote'],
-      ALLOWED_ATTR: ['class'],
-    });
-  };
+    return content
+  } 
 
   const generatePlan = async () => {
     if (!prompt.trim()) return;
