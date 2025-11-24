@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
@@ -19,6 +19,22 @@ export default function Navigation() {
   const toggleDropdown = (menu: string) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
+
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // ✅ CLOSE DROPDOWN WHEN CLICKING OUTSIDE
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const navItems = [
     {
@@ -73,7 +89,10 @@ export default function Navigation() {
         isMenuOpen ? "h-screen" : ""
       }`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center relative">
+      <div
+        ref={navRef}
+        className="max-w-7xl mx-auto flex justify-between items-center relative"
+      >
         {/* Logo */}
         {!searchActive && !isSearchPage && (
           <motion.div
@@ -104,40 +123,61 @@ export default function Navigation() {
               initial={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0 }}
-              className={`lg:flex lg:space-x-6 inset-0 text-center lg:flex-row flex-col ${
+              className={`lg:flex lg:space-x-6 inset-0 text-center lg:flex-row flex-col items-center justify-center ${
                 isMenuOpen ? "block" : "hidden lg:flex"
               }`}
             >
               {navItems.map((item) => (
-                <li key={item.label} className="group">
+                <li key={item.label} className="group relative">
                   <button
                     onClick={() => toggleDropdown(item.label)}
-                    className="w-full lg:w-auto px-4 py-2 hover:text-neon-blue font-medium flex justify-center items-center"
+                    className="relative w-full lg:w-auto px-4 py-2 hover:text-neon-blue font-medium flex justify-center items-center"
                   >
                     {item.label}
                   </button>
 
                   {/* Dropdown */}
-                  <ul
-                    className={`absolute left-0 right-0 top-full w-screen bg-white text-neon-blue shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${
-                      openDropdown === item.label
-                        ? "max-h-96 opacity-100"
-                        : "max-h-0 opacity-0"
-                    }`}
-                  >
-                    <div className="max-w-7xl mx-auto flex flex-wrap justify-center py-4">
-                      {item.subItems.map((sub) => (
-                        <li key={sub.name} className="m-2">
-                          <Link
-                            href={sub.href}
-                            className="block px-6 py-3 rounded-lg hover:bg-neon-blue hover:text-white transition-all font-medium"
-                          >
-                            {sub.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </div>
-                  </ul>
+                  <AnimatePresence>
+                    {openDropdown === item.label && (
+                      <motion.ul
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="
+                        absolute 
+                        top-full
+                        w-[260px] 
+                        bg-white/90 backdrop-blur-xl 
+                        text-neon-blue 
+                        shadow-2xl 
+                        rounded-2xl 
+                        py-3 
+                        border border-white/20
+                        z-40
+                      "
+                      >
+                        {item.subItems.map((sub) => (
+                          <li key={sub.name}>
+                            <Link
+                              href={sub.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className="
+                                block 
+                                px-4 py-3 
+                                rounded-xl 
+                                font-medium 
+                                hover:bg-neon-blue hover:text-white 
+                                transition-all
+                              "
+                            >
+                              {sub.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
                 </li>
               ))}
             </motion.ul>
@@ -146,25 +186,23 @@ export default function Navigation() {
 
         {/* Search Bar */}
         {isSearchPage ? (
-          // --- NO ANIMATION ON SEARCH PAGE ---
           <div className="relative hidden lg:block w-full">
             <input
               type="text"
               placeholder="Search..."
               className="bg-white text-neon-blue px-4 py-2 rounded-full shadow-md 
-      w-full focus:outline-none focus:ring-2 focus:ring-neon-pink"
+                w-full focus:outline-none focus:ring-2 focus:ring-neon-pink"
             />
           </div>
         ) : (
-          // --- ANIMATED VERSION FOR OTHER PAGES ---
           <div className="w-full flex justify-end items-end">
             <motion.div
               className="relative hidden lg:block"
               initial={false}
               animate={
                 searchActive
-                  ? { width: "100%", scale: 1 } // Expanded state
-                  : { width: "180px", scale: 0.95 } // Default state
+                  ? { width: "100%", scale: 1 }
+                  : { width: "180px", scale: 0.95 }
               }
               transition={{ duration: 1, ease: "easeInOut" }}
             >
@@ -176,7 +214,7 @@ export default function Navigation() {
                   setTimeout(() => router.push("/search"), 500);
                 }}
                 className="bg-white text-neon-blue px-4 py-2 rounded-full shadow-md 
-      w-full focus:outline-none focus:ring-2 focus:ring-neon-pink"
+                  w-full focus:outline-none focus:ring-2 focus:ring-neon-pink"
               />
 
               {!searchActive && (

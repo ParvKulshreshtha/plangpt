@@ -38,7 +38,7 @@ export default {
           black: "#212121", // Charcoal Black for text and contrast
           gray: "#9e9e9e", // Medium gray for softer text
         },
-
+        
       },
     },
   },
