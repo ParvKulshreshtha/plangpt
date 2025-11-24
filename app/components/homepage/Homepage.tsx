@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PlanInfo, planData } from "@/app/data/planData";
 import { motion, LayoutGroup } from "framer-motion";
-import { Sparkles, Flame, Star, Compass, ListChecks, Rocket } from "lucide-react";
+import {  Star } from "lucide-react";
 
 const tags = [
       { name: "Travel", icon: "✈️" },
