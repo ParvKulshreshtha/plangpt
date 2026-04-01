@@ -110,50 +110,7 @@ export default function Homepage() {
 
 
     
-<section className="text-center space-y-4">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-extrabold 
-        bg-gradient-to-r from-neon-pink to-neon-blue bg-clip-text text-transparent"
-        >
-          Plan Everything.<br />Live Smarter.
-        </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-electric-blue text-lg max-w-2xl mx-auto"
-        >
-          From travel to fitness to finance — PlanGPT helps you organize your 
-          life beautifully with AI-powered planners.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="flex justify-center gap-4 pt-3"
-        >
-          <button
-            onClick={() => router.push("/plan/create")}
-            className="px-6 py-3 rounded-full bg-neon-pink text-white text-lg font-semibold hover:bg-neon-blue transition"
-          >
-            Create a Plan
-          </button>
-          <button
-            onClick={() => router.push("/explore")}
-            className="px-6 py-3 rounded-full bg-white/20 border border-electric-blue 
-            text-electric-blue font-semibold backdrop-blur-lg hover:bg-neon-blue hover:text-white transition"
-          >
-            Explore Ideas
-          </button>
-        </motion.div>
-      </section>
-
-      {/* ================= AI SUGGESTION BOX ================= */}
       {/* 🔥 AI Quick Start Section */}
 <section className="mt-16 space-y-6">
   <h2 className="text-2xl font-bold text-neon-pink">AI Quick Bites</h2>
@@ -193,33 +150,6 @@ export default function Homepage() {
   </div>
 </section>
 
-{/* 💌 Suggestion Box */}
-<section className="mt-20 flex justify-center">
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6 }}
-    className="w-full bg-white/70 backdrop-blur-xl 
-               border border-electric-blue shadow-xl rounded-2xl p-6"
-  >
-    <h2 className="text-2xl font-bold text-neon-pink mb-3">Suggestion Box</h2>
-    <p className="text-electric-blue mb-4 text-sm">
-      Have ideas to improve PlanGPT? We’re listening.
-    </p>
-
-    <textarea
-      rows={5}
-      placeholder="Write your suggestions here..."
-      className="w-full px-4 py-3 rounded-xl border border-accent-orange 
-                 focus:outline-none focus:ring-2 focus:ring-accent-orange text-accent-orange"
-    />
-
-    <button className="mt-4 w-full bg-neon-pink text-white py-3 rounded-xl 
-                       font-semibold hover:bg-neon-pink/80 transition">
-      Submit Suggestion
-    </button>
-  </motion.div>
-</section>
 
         {/* 🔥 Trending Categories Section */}
 <section className="mt-12 space-y-6">

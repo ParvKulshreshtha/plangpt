@@ -9,7 +9,8 @@ import { GiCrossMark } from "react-icons/gi";
 // API key and model initialization
 const geminiApi = process.env.NEXT_PUBLIC_GEMINI_APIKEY || "";
 const genAI = new GoogleGenerativeAI(geminiApi);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const modelName = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-2.0-flash";
+const model = genAI.getGenerativeModel({ model: modelName });
 
 const PlanCase = () => {
   const [planObject, setPlanObject] = useState<PlanInfo | undefined>();
@@ -18,6 +19,7 @@ const PlanCase = () => {
   const [outputs, setOutputs] = useState<string[]>([]);
   const [generatedPlan, setGeneratedPlan] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [generationError, setGenerationError] = useState<string>("");
   const params = useParams();
 
   useEffect(() => {
@@ -47,11 +49,20 @@ const PlanCase = () => {
     if (!prompt.trim()) return;
 
     setIsGenerating(true);
+    setGenerationError("");
     try {
       const result = await model.generateContent(prompt);
       setGeneratedPlan(formatMessageContent(result.response.text()));
     } catch (error) {
       console.error("Error generating plan:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error while generating plan.";
+      if (errorMessage.includes("[429 ]") || errorMessage.toLowerCase().includes("quota exceeded")) {
+        setGenerationError(
+          "Quota exceeded for this Gemini API key/project. Check billing and quota in Google AI Studio, or switch to a key/project with available quota."
+        );
+      } else {
+        setGenerationError("Failed to generate plan. Please try again in a moment.");
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -155,6 +166,11 @@ const PlanCase = () => {
       {!planObject && !isPlanSearching && <p className="text-lg text-gray-600">Plan not found.</p>}
 
       {/* Generated Plan Output */}
+      {generationError && !isGenerating && (
+        <div className="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-red-700">
+          {generationError}
+        </div>
+      )}
       {generatedPlan && !isGenerating && (
         <div className="mt-12 text-gray-800">
           <div onClick={() => { setGeneratedPlan(""); setInputs({}); setOutputs([]); }} className="text-red-500 flex gap-4 cursor-pointer mb-6">
