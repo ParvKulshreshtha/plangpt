@@ -1,64 +1,64 @@
 "use client";
+
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { Pin } from "lucide-react";
+import { planData } from "@/app/data/planData";
+import { ui } from "@/app/lib/uiClasses";
 
-const words = ["Day", "Trip", "Startup", "Career", "Dream"];
+const FALLBACK_IMAGE =
+  "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg";
 
-const Banner = () => {
+const featuredPlans = planData.slice(0, 4);
+
+export default function Banner() {
   const router = useRouter();
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % words.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
-    <section className="relative w-full bg-gradient-to-r from-neon-pink to-neon-blue text-white text-center py-48 lg:py-20">
-      {/* Subheading */}
-      <h1 className="text-lg sm:text-xl uppercase tracking-widest text-neon-green font-semibold mb-4">
-        AI-Powered Life Planners
-      </h1>
-
-      {/* Animated Heading */}
-      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold flex justify-center items-center gap-3">
-        <span>Plan your</span>
-        <span className="relative inline-block min-w-[140px] text-neon-green">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={words[index]}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-              className="inline-block"
-            >
-              {words[index]}
-            </motion.span>
-          </AnimatePresence>
-        </span>
-      </h2>
-
-
-      {/* CTA Button */}
-      <div className="mt-10">
-        <motion.button
-          onClick={() => router.push("/signup")}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-neon-green text-black px-10 py-4 rounded-full text-lg sm:text-xl font-semibold shadow-[0_0_15px_rgba(57,255,20,0.4)] hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] transition duration-300"
-        >
-          Try Now
-        </motion.button>
+    <section className="space-y-4 p-5 rounded-2xl bg-gradient-to-r from-neon-pink/5 via-white/80 to-neon-blue/5 border border-neon-pink/10">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Pin className="w-4 h-4 text-neon-pink" />
+          <h2 className={`${ui.sectionTitle}`}>Featured</h2>
+        </div>
+        <button type="button" onClick={() => router.push("/plans")} className={ui.link}>
+          Browse all plans
+        </button>
       </div>
 
-      {/* Background Glow */}
-      <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-neon-green/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+        {featuredPlans.map((plan) => (
+          <button
+            key={plan.uri}
+            type="button"
+            onClick={() => router.push(`/plans/${plan.uri}`)}
+            className={`flex items-center gap-3 shrink-0 w-64 p-3 ${ui.card} text-left`}
+          >
+            <img
+              src={plan.image || FALLBACK_IMAGE}
+              alt={plan.useCase}
+              className="w-12 h-12 rounded-lg object-cover shrink-0 ring-2 ring-neon-blue/10"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+              }}
+            />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {plan.useCase}
+              </p>
+              <p className="text-xs text-gray-500 line-clamp-2">{plan.description}</p>
+            </div>
+          </button>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => router.push("/plans")}
+          className="flex flex-col items-center justify-center shrink-0 w-40 p-3 rounded-xl border border-dashed border-neon-blue/30 bg-neon-blue/5 hover:bg-neon-blue/10 transition"
+        >
+          <span className="text-2xl text-neon-blue">+</span>
+          <span className="text-xs font-medium text-neon-blue mt-1">View all plans</span>
+        </button>
+      </div>
     </section>
   );
-};
-
-export default Banner;
+}

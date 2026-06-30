@@ -1,17 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { planData, PlanInfo } from "../data/planData";
+import CategoryModal from "../components/plans/CategoryModal";
+import { ui } from "../lib/uiClasses";
+
+const FALLBACK_IMAGE =
+  "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg";
+
+const featuredCategories = [
+  { tag: "travel", label: "Travel" },
+  { tag: "fitness", label: "Fitness" },
+  { tag: "wedding", label: "Wedding" },
+  { tag: "finance", label: "Finance" },
+  { tag: "events", label: "Events" },
+  { tag: "health", label: "Health" },
+  { tag: "food", label: "Food" },
+];
 
 export default function Plans() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const activeCategory = (searchParams.get("category") || "").toLowerCase().trim();
   const searchQuery = (searchParams.get("q") || "").toLowerCase().trim();
 
-  const categories = useMemo(() => {
+  const allCategories = useMemo(() => {
     return Array.from(
       new Set(
         planData
@@ -21,6 +37,9 @@ export default function Plans() {
       )
     ).sort();
   }, []);
+
+  const featuredTags = featuredCategories.map((c) => c.tag);
+  const activeIsFeatured = !activeCategory || featuredTags.includes(activeCategory);
 
   const filteredPlans = useMemo(() => {
     return planData.filter((plan) => {
@@ -48,88 +67,109 @@ export default function Plans() {
     return queryString ? `/plans?${queryString}` : "/plans";
   };
 
+  const selectCategory = (category?: string) => {
+    router.push(category ? buildPlansUrl(category) : buildPlansUrl());
+    setModalOpen(false);
+  };
+
   return (
-    <div className="font-sans"> {/* Updated background color */}
-      {/* Heading Section */}
-      <div className="text-center py-16">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neon-pink">
-          Our Plans
-        </h1>
-        <p className="mt-4 text-lg sm:text-xl lg:text-2xl max-w-3xl mx-auto text-electric-blue">
-          Explore all available plans. Find the one that fits your needs.
-        </p>
+    <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-6xl space-y-6">
+      <p className="text-sm text-gray-500">
+        Explore all available plans.{" "}
+        <span className="text-neon-blue">Find the one that fits your needs.</span>
+      </p>
+
+      <div className="flex flex-wrap gap-2 items-center">
+        <button
+          type="button"
+          onClick={() => router.push(buildPlansUrl())}
+          className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
+            !activeCategory ? ui.pillActive : ui.pillInactive
+          }`}
+        >
+          All
+        </button>
+
+        {featuredCategories.map(({ tag, label }) => (
+          <button
+            key={tag}
+            type="button"
+            onClick={() => router.push(buildPlansUrl(tag))}
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
+              activeCategory === tag ? ui.pillActive : ui.pillInactive
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+
+        {activeCategory && !activeIsFeatured && (
+          <button
+            type="button"
+            onClick={() => router.push(buildPlansUrl(activeCategory))}
+            className={`px-4 py-2 rounded-full border text-sm font-medium capitalize ${ui.pillActive}`}
+          >
+            {activeCategory}
+          </button>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          className="px-4 py-2 rounded-full border border-dashed border-neon-purple/30 text-sm font-medium text-neon-purple hover:bg-neon-purple/5 hover:border-neon-purple/50 transition"
+        >
+          View more categories
+        </button>
       </div>
 
-      {/* Main Content Section */}
-      <main className="p-6 sm:p-8 lg:p-12">
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-neon-pink mb-3">Filter by category</h2>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => router.push(buildPlansUrl())}
-              className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
-                !activeCategory
-                  ? "border-neon-pink text-neon-pink"
-                  : "border-electric-blue text-electric-blue hover:border-neon-pink hover:text-neon-pink"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => router.push(buildPlansUrl(category))}
-                className={`px-4 py-2 rounded-full border text-sm font-medium capitalize transition ${
-                  activeCategory === category
-                    ? "border-neon-pink text-neon-pink"
-                    : "border-electric-blue text-electric-blue hover:border-neon-pink hover:text-neon-pink"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-          {(activeCategory || searchQuery) && (
-            <p className="mt-3 text-sm text-electric-blue">
-              Showing {filteredPlans.length} result{filteredPlans.length === 1 ? "" : "s"}
-              {activeCategory ? ` in "${activeCategory}"` : ""}.
-            </p>
-          )}
-        </div>
+      {(activeCategory || searchQuery) && (
+        <p className="text-sm text-gray-500">
+          Showing {filteredPlans.length} result{filteredPlans.length === 1 ? "" : "s"}
+          {activeCategory ? ` in "${activeCategory}"` : ""}.
+        </p>
+      )}
 
-        <div className="flex flex-wrap gap-6 justify-center">
-          {filteredPlans?.map((planObject: PlanInfo) => (
-            <div 
-              key={planObject.uri}
-              onClick={() => router.push(`/plans/${planObject.uri}`)}
-              className="w-full sm:w-80 lg:w-96 bg-white border border-electric-blue rounded-lg shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition duration-300 transform hover:scale-105"
-            >
-              <img
-                src={planObject.image !== "" ? planObject.image : "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg"}
-                alt={planObject.useCase}
-                className="w-full h-60 object-cover mb-4"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg";
-                }}
-              />
-              <div className="p-4">
-                <h3 className="text-xl sm:text-2xl font-semibold text-neon-pink mb-2">
-                  {planObject.useCase}
-                </h3>
-                <p className="text-sm sm:text-base text-electric-blue mb-4">
-                  {planObject.description}
-                </p>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredPlans.map((planObject: PlanInfo) => (
+          <button
+            key={planObject.uri}
+            type="button"
+            onClick={() => router.push(`/plans/${planObject.uri}`)}
+            className={`flex gap-4 p-4 ${ui.card} text-left`}
+          >
+            <img
+              src={planObject.image !== "" ? planObject.image : FALLBACK_IMAGE}
+              alt={planObject.useCase}
+              className="w-24 h-24 rounded-xl object-cover shrink-0"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+              }}
+            />
+            <div className="min-w-0">
+              <h3 className="text-base font-semibold text-gray-900">
+                {planObject.useCase}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1 line-clamp-3">
+                {planObject.description}
+              </p>
             </div>
-          ))}
-        </div>
-        {filteredPlans.length === 0 && (
-          <p className="text-center text-electric-blue mt-8">
-            No plans found for the selected filters.
-          </p>
-        )}
-      </main>
+          </button>
+        ))}
+      </div>
+
+      {filteredPlans.length === 0 && (
+        <p className="text-center text-gray-500 py-8">
+          No plans found for the selected filters.
+        </p>
+      )}
+
+      <CategoryModal
+        open={modalOpen}
+        categories={allCategories}
+        activeCategory={activeCategory}
+        onClose={() => setModalOpen(false)}
+        onSelect={selectCategory}
+      />
     </div>
   );
 }

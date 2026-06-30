@@ -3,11 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #faf9fc;
   --foreground: #171717;
 }
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 0, 127, 0.04) 0%,
+    rgba(255, 255, 255, 1) 35%,
+    rgba(0, 188, 212, 0.05) 100%
+  );
+  background-attachment: fixed;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

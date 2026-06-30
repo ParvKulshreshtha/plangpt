@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Search as SearchIcon } from "lucide-react";
 import { planData } from "@/app/data/planData";
+import { ui } from "@/app/lib/uiClasses";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -55,85 +57,80 @@ export default function SearchPage() {
   };
 
   return (
-    <main className="font-sans p-6 sm:p-8 lg:p-12 max-w-5xl mx-auto">
-      <h1 className="text-3xl sm:text-4xl font-bold text-neon-pink">Search</h1>
-      <p className="mt-2 text-electric-blue">Find plans or browse categories.</p>
+    <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-3xl space-y-6">
+      <p className="text-sm text-gray-500">
+        Find plans or <span className="text-neon-pink">browse categories</span>.
+      </p>
 
-      <div className="mt-6 flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2">
         <button
+          type="button"
           onClick={() => setSelectedType("plans")}
           className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
-            selectedType === "plans"
-              ? "border-neon-pink text-neon-pink"
-              : "border-electric-blue text-electric-blue hover:border-neon-pink hover:text-neon-pink"
+            selectedType === "plans" ? ui.pillActive : ui.pillInactive
           }`}
         >
           Plans
         </button>
         <button
+          type="button"
           onClick={() => setSelectedType("categories")}
           className={`px-4 py-2 rounded-full border text-sm font-medium transition ${
-            selectedType === "categories"
-              ? "border-neon-pink text-neon-pink"
-              : "border-electric-blue text-electric-blue hover:border-neon-pink hover:text-neon-pink"
+            selectedType === "categories" ? ui.pillActive : ui.pillInactive
           }`}
         >
           Categories
         </button>
       </div>
 
-      <div className="mt-6 flex gap-3">
+      <div className="relative">
+        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neon-blue/60" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && selectedType === "plans" && goToPlansWithQuery()}
           placeholder={`Search ${selectedType}...`}
-          className="w-full px-4 py-3 rounded-xl border border-electric-blue text-neon-blue focus:outline-none focus:ring-2 focus:ring-neon-pink"
+          className={ui.input + " pl-11 py-3 rounded-full"}
         />
-        {selectedType === "plans" && (
-          <button
-            onClick={goToPlansWithQuery}
-            className="px-5 py-3 rounded-xl bg-neon-pink text-white font-semibold hover:bg-electric-blue transition"
-          >
-            Search
-          </button>
-        )}
       </div>
 
       {selectedType === "plans" ? (
-        <section className="mt-8 space-y-3">
+        <section className="space-y-2">
           {filteredPlans.map((plan) => (
             <button
               key={plan.uri}
+              type="button"
               onClick={() => router.push(`/plans/${plan.uri}`)}
-              className="w-full text-left p-4 rounded-xl border border-electric-blue hover:border-neon-pink transition"
+              className={`w-full text-left p-4 ${ui.card}`}
             >
-              <h2 className="text-lg font-semibold text-neon-pink">{plan.useCase}</h2>
-              <p className="text-sm text-electric-blue mt-1">{plan.description}</p>
+              <h2 className="text-base font-semibold text-gray-900">{plan.useCase}</h2>
+              <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
             </button>
           ))}
           {filteredPlans.length === 0 && (
-            <p className="text-electric-blue">No matching plans found.</p>
+            <p className="text-gray-500 text-sm">No matching plans found.</p>
           )}
         </section>
       ) : (
-        <section className="mt-8">
-          <div className="flex flex-wrap gap-3">
+        <section>
+          <div className="flex flex-wrap gap-2">
             {filteredCategories.map((category) => (
               <button
                 key={category}
+                type="button"
                 onClick={() => goToPlansWithCategory(category)}
-                className="px-4 py-2 rounded-full border border-electric-blue text-electric-blue capitalize hover:border-neon-pink hover:text-neon-pink transition"
+                className={`px-4 py-2 rounded-full border text-sm capitalize ${ui.pillInactive}`}
               >
                 {category}
               </button>
             ))}
           </div>
           {filteredCategories.length === 0 && (
-            <p className="text-electric-blue">No matching categories found.</p>
+            <p className="text-gray-500 text-sm mt-4">No matching categories found.</p>
           )}
         </section>
       )}
-    </main>
+    </div>
   );
 }

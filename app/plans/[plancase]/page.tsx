@@ -3,14 +3,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { planData, PlanInfo } from "../../data/planData";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GiCrossMark } from "react-icons/gi";
-
-// API key and model initialization
-const geminiApi = process.env.NEXT_PUBLIC_GEMINI_APIKEY || "";
-const genAI = new GoogleGenerativeAI(geminiApi);
-const modelName = process.env.NEXT_PUBLIC_GEMINI_MODEL || "gemini-2.0-flash";
-const model = genAI.getGenerativeModel({ model: modelName });
 
 const PlanCase = () => {
   const [planObject, setPlanObject] = useState<PlanInfo | undefined>();
@@ -51,18 +44,23 @@ const PlanCase = () => {
     setIsGenerating(true);
     setGenerationError("");
     try {
-      const result = await model.generateContent(prompt);
-      setGeneratedPlan(formatMessageContent(result.response.text()));
+      const response = await fetch("/api/generate-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setGenerationError(data.error || "Failed to generate plan. Please try again in a moment.");
+        return;
+      }
+
+      setGeneratedPlan(formatMessageContent(data.text));
     } catch (error) {
       console.error("Error generating plan:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error while generating plan.";
-      if (errorMessage.includes("[429 ]") || errorMessage.toLowerCase().includes("quota exceeded")) {
-        setGenerationError(
-          "Quota exceeded for this Gemini API key/project. Check billing and quota in Google AI Studio, or switch to a key/project with available quota."
-        );
-      } else {
-        setGenerationError("Failed to generate plan. Please try again in a moment.");
-      }
+      setGenerationError("Failed to generate plan. Please try again in a moment.");
     } finally {
       setIsGenerating(false);
     }
@@ -71,10 +69,9 @@ const PlanCase = () => {
   const prompt: string = `${planObject?.initialPrompt} with inputs as ${JSON.stringify(inputs)}. we need detailed info about: ${JSON.stringify(outputs)}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-pink-50 p-8 md:px-12 lg:px-16">
-      {/* Loading Progress Bar */}
+    <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-3xl">
       {isGenerating && (
-        <div className="fixed top-0 left-0 w-full h-1 bg-neon-pink animate-pulse z-50"></div>
+        <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-pink to-neon-blue animate-pulse z-50" />
       )}
 
       {!params?.plancase && 
@@ -86,7 +83,7 @@ const PlanCase = () => {
         <img
           src={planObject.image !== "" ? planObject.image : "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg"}
           alt={planObject.useCase}
-          className="w-full h-[350px] object-cover rounded-lg mb-6"
+          className="w-full h-[350px] object-cover rounded-xl mb-6 ring-2 ring-neon-pink/10 shadow-md"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = "https://media.wired.com/photos/5a0a38c1d07f6824ff44221b/master/w_2560%2Cc_limit/twitterlists-TA.jpg";
@@ -101,7 +98,7 @@ const PlanCase = () => {
 
           {/* Input Fields */}
           <div>
-            <h3 className="text-lg md:text-xl font-semibold text-teal-600 mb-4">Tell us about your plan:</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-neon-blue mb-4">Tell us about your plan:</h3>
             {planObject.inputs.map((input) => (
               <div key={input.field} className="mb-6">
                 <label
@@ -113,7 +110,7 @@ const PlanCase = () => {
                 <input
                   id={input.field}
                   name={input.field}
-                  className="w-full px-6 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  className="w-full px-6 py-3 border border-gray-200 rounded-xl bg-white/80 focus:outline-none focus:ring-2 focus:ring-neon-blue/30 focus:border-neon-blue/40"
                   required={input.required}
                   placeholder={`Enter ${input.label}`}
                   onChange={(e) =>
@@ -126,13 +123,13 @@ const PlanCase = () => {
 
           {/* Outputs Selection */}
           <div>
-            <h3 className="text-lg md:text-xl font-semibold text-teal-600 mb-4">Select What you want to know:</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-neon-pink mb-4">Select What you want to know:</h3>
             {planObject.outputs.map((output) => (
               <div key={output.field} className="flex items-center mb-6">
                 <input
                   type="checkbox"
                   id={output.field}
-                  className="w-5 h-5 border-gray-300 rounded-md focus:ring-2 focus:ring-teal-600"
+                  className="w-5 h-5 border-gray-300 rounded-md text-neon-pink focus:ring-neon-pink/30"
                   onChange={() =>
                     setOutputs((prev) =>
                       prev.includes(output.field)
@@ -154,7 +151,7 @@ const PlanCase = () => {
           {/* Generate Button */}
           <button
             onClick={() => generatePlan()}
-            className="w-full py-3 bg-neon-green text-white rounded-md hover:bg-neon-pink focus:outline-none focus:ring-2 focus:ring-neon-blue transition"
+            className="w-full py-3 bg-gradient-to-r from-neon-green to-neon-blue text-white font-semibold rounded-xl hover:from-neon-pink hover:to-neon-purple focus:outline-none focus:ring-2 focus:ring-neon-pink/30 transition"
           >
             AI Generate
           </button>
