@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, LayoutGrid, Plus, Search } from "lucide-react";
+import { Compass, LayoutGrid, Search } from "lucide-react";
 import Logo from "./Logo";
+import CreateButton from "./CreateButton";
 
 const navItems = [
   { label: "Discover", href: "/", icon: Compass },
@@ -26,13 +27,7 @@ export default function Sidebar() {
       </div>
 
       <div className="p-4">
-        <Link
-          href="/plans"
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-neon-blue/25 bg-white/80 text-sm font-medium text-neon-blue hover:bg-neon-blue/5 hover:border-neon-blue/40 transition"
-        >
-          <Plus className="w-4 h-4" />
-          Create
-        </Link>
+        <CreateButton />
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
@@ -51,18 +46,6 @@ export default function Sidebar() {
           </Link>
         ))}
       </nav>
-
-      <div className="p-4 border-t border-neon-pink/10">
-        <button
-          type="button"
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-white/70 hover:text-neon-blue transition"
-        >
-          <span className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-pink to-neon-blue text-white flex items-center justify-center text-xs font-bold">
-            U
-          </span>
-          Login / Signup
-        </button>
-      </div>
     </aside>
   );
 }

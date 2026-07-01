@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Compass, LayoutGrid, Menu, Plus, Search, X } from "lucide-react";
+import { Compass, LayoutGrid, Menu, Search, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import Logo from "./Logo";
+import CreateButton from "./CreateButton";
 
 const mobileNavItems = [
   { label: "Discover", href: "/", icon: Compass },
@@ -40,14 +41,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </button>
             </div>
             <div className="p-4 space-y-1">
-              <Link
-                href="/plans"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-neon-blue/25 bg-white/80 text-sm font-medium text-neon-blue"
-              >
-                <Plus className="w-4 h-4" />
-                Create
-              </Link>
+              <CreateButton />
               {mobileNavItems.map(({ label, href, icon: Icon }) => (
                 <Link
                   key={href}
